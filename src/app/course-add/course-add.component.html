@@ -1,0 +1,112 @@
+<div class="card">
+  <div class="card-header">Nuevo curso</div>
+    <pre>
+        {{model | json}}
+    </pre>
+  <div class="card-body">
+    <form #formAdd="ngForm">
+      <div class="form-group">
+        <label for="name">Nombre*</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          placeholder="Ingrese Nombre"
+          [(ngModel)]="model.name"
+          #name="ngModel"
+          required
+        />
+        <div
+          *ngIf="name.invalid && (name.dirty || name.touched)"
+          class="alert alert-danger"
+        >
+          El nombre es requerido
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="description">Descripcion*</label>
+        <input
+          type="text"
+          class="form-control"
+          id="description"
+          name="description"
+          placeholder="Descripcion"
+          required
+          minlength="5"
+          [(ngModel)]="model.description"
+          required
+          #description="ngModel"
+        />
+        <div
+          *ngIf="
+            description.invalid && (description.dirty || description.touched)
+          "
+          class="alert alert-danger"
+        >
+          <div *ngIf="description.errors.required">
+            Descripcion es requerida
+          </div>
+          <div *ngIf="description.errors.minlength">
+            Descripcion minima requerida
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="price">Precio*</label>
+        <input
+          type="number"
+          class="form-control"
+          id="price"
+          name="price"
+          placeholder="Precio"
+          required
+          [(ngModel)]="model.price"
+          #price="ngModel"
+        />
+        <div
+          *ngIf="price.invalid && (price.dirty || price.touched)"
+          class="alert alert-danger"
+        >
+          El precio es requerido
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="url">URL de imagen</label>
+        <input
+          type="text"
+          class="form-control"
+          id="url"
+          name="url"
+          placeholder="URL de Imagen"
+          [(ngModel)]="model.imageUrl"
+        />
+      </div>
+      <div class="form-group form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="active"
+          name="active"
+        />
+        <label class="form-check-label" for="active">Curso Activo</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="formAdd.form.invalid || formAdd.form.untouched">
+        Submit
+      </button>
+    </form>
+
+    <div>
+      <pre>
+                Form.valid: {{ formAdd.form.valid }}
+                Form.invalid: {{ formAdd.form.invalid }}
+                Form.touched: {{ formAdd.form.touched }}
+                Form.untouched: {{ formAdd.form.untouched }}
+                Form.pristine: {{ formAdd.form.pristine }}
+                Form.dirty: {{ formAdd.form.dirty }}
+            </pre
+      >
+    </div>
+  </div>
+</div>

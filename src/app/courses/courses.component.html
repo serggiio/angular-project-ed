@@ -1,0 +1,61 @@
+<div class="card">
+
+    <div class="card-header">
+        {{ titulo }}
+    </div>
+
+    <div *ngIf="cursos && cursos.length >0" class="card-body">
+        <div class="row filtro">
+            <div class="col-md-2">Filtrar por: </div>
+            <div class="col-md-5">
+                <input #filtro type="text" [(ngModel)]="textoFiltro">
+                <span>{{textoFiltro}}</span>
+            </div>
+            <div class="col-md-4">
+                <button type="button" [routerLink]="['/course/add']" class="btn btn-primary">Nuevo curso</button>
+            </div>
+        </div>
+        
+        <div>
+            <table class="table">
+                <thead>
+                    <th>Logo</th>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Fecha de inicio</th>
+                    <th>Precio</th>
+                    <th>Rating</th>
+                    <th>Acciones</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let curso of cursosFilter">
+                        <td><img [src]="curso.imageUrl"
+                                [style.width]="imageWidth"
+                                [title]="'TypeScript'">
+                        </td>
+                        <td>{{curso.name}}</td>
+                        <td>{{curso.description}}</td>
+                        <td>{{curso.startDate | date | lowercase}}</td>
+                        <td>{{curso.price | currency: 'Bs' }}</td>
+                        <td>{{curso.rating | number}}</td>
+                        <td>                            
+                            <app-course-action [curso]="curso" 
+                            (edit)="onEditCurso($event)" 
+                            (delete)="onDeleteCurso($event)"></app-course-action>
+                        </td>
+                    </tr>                    
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div *ngIf="!cursos || cursos.length === 0" class="alert alert-dark" role="alert">
+        No existen cursos disponibles, intente despues
+    </div>
+    
+    <div *ngIf="messageError" class="alert alert-danger" role="alert">
+        {{messageError}}
+    </div>
+
+</div> 

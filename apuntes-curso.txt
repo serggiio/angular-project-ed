@@ -1,0 +1,449 @@
+rputer outlet asocia un componente
+
+data binding 
+enlazar diferencites partes y trabajar con DOM
+se manifiesta de distintas formas
+
+Interpolacion
+tipo de data binding unidireccional
+conjunto de propiedades, puede definir atributos
+cada que queramos reflejar un cambio en la plantilla del nuevo valor con respecto lo que ve el usuario en pantalla 
+{{ "template expression" }}
+Plantilla <- Clase
+
+archivo global de estilos
+src/styles.css
+
+componente tiene plantilla, clase 
+si queremos enviar datos podemos usar property binding
+[], generalmente se enviar propiedades de una clase o objetos
+<img [src]="variable">, [disabled]="variable"
+
+Event binding tercera forma de enlazar los elementos al DOM
+comunicar cambios desde acciones desde la plantilla a la clase
+("evento objetivo") = "metodo()"
+
+Pipes (filtros)
+toma un dato de entrada y lo transforma
+Se establece un formato para la salida
+Soporta parametros
+{{ fecha | date}}
+de izquierda a derecha
+fecha se procesa a date, puede haber mas de uno
+{{ fecha | date | lowercase }}
+
+Directivas estructurales
+directivas elementos html personalizados, permite entender el HTML
+Directivas built-in ya incorporadas
+Directivas personalizadas osea html personalizado (crear etiquetas)
+COMPONENTE ts @Component con propiedad selector: 'nombre etiqueta html' que se usa en el index
+
+Directivas estructurales manipulan la estructura del DOM
+agregan, eliminan, actualizan
+algunas serian *ngIf, *ngFor
+
+@Input
+Enviar datos desde un componente padre al componente hijo
+<app-course-action [curso]="curso"></app-course-action>
+Enviar una variable o parametro al componente html usando su decorador
+Decorador de componente hijo:   @Input() curso: Curso;
+
+Otra forma de enviar es @Output y EventEmitter
+Paren component <- child component(event)
+child-component (deleteCurso)="method()"
+usar evento deleteCurso en child component html
+    seguido el metodo crearlo en componente padre
+    seguido el componente hijo necesita las propiedades creadas "deleteCurso"
+    Estas propiedades con el decorador @Output y :EventEmiter<Curso> = new EventEmiter<Curso>();
+    //Curso es un tipo de dato para vent emiter
+    //Un @Output por cada evento creado
+    Se accede al atributo creado del hijo this.edit.emit(curso); 
+    //emitir el objeto osea propagar el objeto curso hacia el componente padre
+    En el html hijo se pone ($event) porque contiene el objeto que se envia desde emit componente hijo
+    Como resultado el metodo creado en el componente hijo ejecuta el metodo del componente padre
+    <app-course-action [curso]="curso" 
+        (edit)="onEditCurso($event)" 
+        (delete)="onDeleteCurso($event)"></app-course-action>
+        EJEMPLO (nombre de propiedad va en hijo)="nombreMetodoPadre($objeto)"
+
+
+Para eliminar el elemento desde el componente padre solo se elimina el elemento del objeto array Cursos
+this.cursos = this.cursos.filter((c: Curso)=>{
+      return c.id !== curso.id;
+});
+recibe el curso en c y retorna todos los que no son iguales a ese id
+
+path: 'course/:id' //parametro dinamico id para rutas
+Para redireccionar desde el metodo en el componente padre redireccionar
+importar desde el contrustor Router 
+this.router.navigate(['course/1']);
+
+@ViewChild
+Como acceder a elementos html desde componentes
+se puede usar por un template reference ej:
+<input #filtro type="text">//#referenciaDePlantilla
+Cada que se acceda a la variable #filtro se esta accediendo al elemento html
+Desde el componente - implements, AfterViewInit
+propiedad y decorador:
+@ViewChild('filtro', {static: false})
+filtro: ElementRef;
+y metodo:
+ngAfterViewInit() {
+    this.filtro.nativeElement.value = 'Angular';
+}
+//se accede al DOM y se establece el valor value = ''
+//en ngAfterViewInit se puede acceder al valor, estilos etc osea DOM
+
+Para filtrar directiva ngModel y atributo textoFiltro
+[(ngModel)]="textoFiltro"
+ngModel por defecto no reconoce y se tiene que importar en app.module.ts
+
+
+CLASE NUMERO 6  
+1. Modulos
+Modulo permite agrupar y configurar caracteristicas o codigo relacionado
+agrupar componentes, servicios, valores, funciones
+Modulo configurar inyector y compilador ej conjunto de cursos: modulo cursos componentes relacionados
+En teoria es una clase de ts @NgModule
+Modulo declarations(arreglo de componentes, directivas, pipes)
+imports(Otros modulos, componentes, directivas, pipes, etc)
+providers(Declarar servicios que forman parte del modulo)
+
+2.Inyeccion de dependencias
+Patron de diseño orientado a objetos
+Permite el paso de objetos como dependencias
+Pueden pasar a componentes o inyectar
+El patron permite la creacion de instancias
+Ejemplo export class Auto.......constructor()
+
+3.Servicios
+Categoria amplia que abarca valores, funciones o caracteristicas
+Es una clase con proposito bien definido(hacerlo bien especifico y permita resolver un problema)
+Ej export class LoggerService() solo funciones
+Seran consumidos por los componentes
+
+Para aplicar servicios en el constructor del componente que va a usarlo  private cursosService: CoursesService
+  constructor(private router: Router, private cursosService: CoursesService) { 
+entonces a la variable que requere usar el servicio: this.cursos = this.cursosService.getCourses();
+getCourses viene del servicio
+
+Definir un servicio lo más reducido y específico posible y que cumpla de forma eficiente su función.
+Convenciones en estructuras de archivo y de nombre.
+
+Ejecutar una funcion cada que se cambie un texto u otro tipo de dato
+  private _textoFiltro: string = '';
+  
+  set textoFiltro(t: string){
+    console.log('text de filtro, ', t);
+    this._textoFiltro = t;
+    
+  }
+
+  get textoFiltro(){
+    return this._textoFiltro;
+  }
+dECLARAR el dato en private con _ al inicio 
+entonces set y get crear, set se ejecuta cada que cambia la variable y get para consultar
+
+path: '', redirectTo: 'courses', pathMatch: 'full'
+Verificar que no se tiene nada en el path para redireccionar a courses
+
+Asincrono
+asincronia: ocurrencia de eventos independientes del flujo principal del programa
+asi como tambien la manera de manejar los eventos
+
+lenguajes de programacion se ejecuta en el hilo principal
+hay eventos independientes de este flujo principal
+osea se generan nuevos hijos o procesos de ejecucion
+En js este no es el caso, corre en un solo hijo de ejecucion
+se ejecuta de manera secuencial 
+asincrono ej: algo que se ejecute en el futuro, por Ejemplo 
+console log, funcion time out con un log, console log
+resultado: console log, console log, tome out y log del timeout
+
+Sincrono solo mensajes que se ejecutan en el orden que se ve ej:
+console log, console log1, console log2
+
+Las funciones síncronas son aquellas que no se necesita esperar algún tiempo, que se ejecuta una detrás de otra con una secuencia
+La asincronía es la capacidad que se tiene de manejar diferentes funciones sin tener que detener el proceso principal de la aplicación.
+
+PROMESAS
+Objetos que representan la abstraccion de un resultado de operacion asincrona
+LLegan a resolver el problema de invocar y no tener que esperar
+resolve y reject
+
+se resuelve la promesa con .then(mensaje){}.....catch(mensaje){}
+
+promise
+  .then(message => {
+    console.log("promesa resuelta: ", message);
+    return promise2;
+  })
+  .then(message2 => {
+    console.log("promesa resuelta2: ", message2);
+  })
+  .catch(error => {
+    console.log(error);
+  });
+
+  entre 2 promesas el primer return hace que pase a la ejecucion de ese return promesa
+  y su respectivo then message2
+
+  PATRON OBSERVER
+  es un patron de diseño
+  El patrón Observer puede ser usado cuando hay objetos que dependen
+   de otro y necesitan ser notificados si sufre cambios.
+
+PROGRAMACION REACTIVA
+paradigma para la programacion asincrona
+procesamiento de un flujo de datos de manera asincrona
+Basicamente todo se convierte en un flujo de datos
+
+RxJS
+libreria para la programacion reactiva con js
+funciones utilizatiras para el manejo de observable
+User para convervtir codigo en observables,
+promesas en observables, filtrar flujos de datos, combinar flujos de datos
+
+fetch pede traer resultados de una API url en una promesa
+para poder resolverla then o await
+const data = from(users.json());
+//en data se tiene un observable de users que tiene el fetch de la api resultados
+    osea los datos que se resolvieron con await
+
+
+async function testObservable() {
+  const users = await fetch("https://randomuser.me/api?results=5");
+  const data = from(users.json());//from retorna un objeto observable, osea que el observable esta en data
+  data.subscribe({
+    next(response) {
+      console.log("RESPUESTA ", response.results);
+    },
+    error(error) {},
+    complete() {
+      console.log("FINALIZADO ");
+    }
+  });
+}
+
+testObservable();
+//Ejemplo funcion
+fetch trae los datos en promesa y se resuelve con await
+data para usar el json
+suscribe para ejecutarlo, con 3 fases siguiente(por cada uno)
+error y proceso finalizado
+
+CLASE 8
+tema 1
+ARQUITECTURA CLIENTE SERVIDOR
+Varios clientes solicitan y reciben servicios de un servidor centralizado
+
+Clientes proporcionan UI para la solicitud de servicios y mostrar resultados
+servidores reciben solicitudes para responder
+Servidor permite proveer una UI a los clientes
+
+REST Y SERVICIOS RESTFULL
+rest( representational state transfer)
+Rest patron de arquitectura para servicios web (considera restricciones para su arquitectura) define los lineamientos para esta arquitectura
+
+Restful Servicios web que implementar arquitectura REST (implementar servicios web obedeciendo la arquitectura)
+
+Restful puede tener un conjunto de capas, comunicarse con los servicios rest(REST REQUEST HANDLER), procesar el request y json respuesta (SERVICE HANDLER), leer la respuesta para la DB(DB HANDLER)
+
+METODOS http
+define un conjunto de metodos de peticion para indicar acciones sobre un recurso. EJ Leer datos, modificar, borrar, etc. CRUD
+Suelen llamarse http verbos
+
+PETICIONES ANGULAR HTTP
+frontend se comuniucan con los servicios backend a traves del protocolo http
+Angular procee un cliente HttpClient(@angular/common/http)
+Ofrece un API http simplificado para aplicaciones angular 
+Se deberia tener una capa de servicio en la que se haga la solicitud http get, post, etc y reporte el observable y acceder a la respuesta con suscribe 
+
+LLamado a un servicio basico del mismo folder de angular assets/courses/..../courses.json
+
+return this.httpClient.get<Curso[]>('assets/api/courses/courses.json')
+retorna un observable entonces desde el llamado: 
+this.cursosService.getCourses()
+      .subscribe((cursos: Curso[]) =>  {
+        this.cursos = cursos;
+      });
+      //Con suscribe se obtiene el objeto json
+
+2 maneras de manejar errores 
+  catch an replace// error y reemplazar el error por una respuesta ej. array vacio en error
+  catch and trow// error y mostrar el error
+
+
+    getCourses(): Observable<Curso[]> {
+    return this.httpClient.get<Curso[]>('assets/api/courses/courses.json')
+      .pipe(
+        catchError(this.manejarError)//pipe para manejar un error del servicio
+      );
+  }
+  manejarError(error: HttpErrorResponse){
+    if(error.error instanceof ErrorEvent){
+      console.log('Error de cliente', error.error.message);
+    } else {
+      //Error en servidor
+      console.log('Error status: ', error.status);
+      console.log('Error: ', error.error);
+    }
+    //catch and rethrow
+    return throwError('Paso un problema bro, probalo despues');//error y mostrar el error con throw
+  }
+
+
+  this.cursosService.getCourses()
+    .pipe(
+      tap(cursos => console.log('Cursos', cursos)),//tap algo adicional para debug//ej pasa un log cada que llegan datos
+      catchError(error => {//catch manejar el error
+        this.messageError = error;//mensaje desde service
+        //return of([]);
+        //catch and replace
+        return EMPTY;//empty nunca retorna nada
+      })
+    )
+      .subscribe((cursos: Curso[]) =>  {
+        this.cursos = cursos;
+      });
+
+
+ANGULAR FORMULARIOS
+provee 2 formas de trabajaron con formularios
+  Plantillas 
+  formularios reactivos
+
+Plantillas para formularios sin mucha logica 
+
+
+FORMULARIOS ANGULAR
+Angular infiere el objeto fomulario desde el DOM
+<form #formAdd="ngForm">
+ngForm nos traera el estado del fomulario touched, dirty, valid
+
+
+para verificar que el formulario se ponga en valido o invalido segun un campo:
+<input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          placeholder="Ingrese Nombre"
+          [(ngModel)]="nombre" //igual a una variable nombre en .ts
+          #name="ngModel" 
+          required
+        />
+//Ej, ver propiedades dirty, valid, touched desde html
+formAdd.form.valid        
+
+VALIDACION FORMULARIOS DE PLANTILLAS
+se agregan como atributos html, angular usa directivas para ahcerlos coincidir
+EJ PARA VALIDACION
+ #name="ngModel"
+          required
+        />
+        <div
+          *ngIf="name.invalid && (name.dirty || name.touched)"
+          class="alert alert-danger"
+        >
+  //#name="ngmodel"  //es como crear una variable llamada name, y esa es usada en el div del mensaje ngIf
+
+  TWO-WAY DATA BINDING
+  hace que desde el html se comunique hasta la clase a algun campo ej.:
+  [(ngModel)]="model.name"//html input
+  en la clase existe un modelo model.name
+  entonces cada que se hace un cambio en el input se comunica con la clase y el respectivo cambio
+
+
+  FORMULARIOS REACTIVOS
+  El objeto formulario se crea programaticamente y se sincroniza con el DOM
+  Proveen un enfoque basado en modelos de datos para el menejo de entradas de usuario
+importar en app-module ReactiveFormsModule,
+  En la clase = formControl('')
+  en html propiedad en input: [formControl]="name"
+
+  courseAddForm: FormGroup;
+  La variable de tipo FormGroup hace referencia a todo el formulario
+
+  En nginit crear un objeto
+  this.courseAddForm = new FormGroup({
+      name: new FormControl(null),//si se reemplaza el null, el input se crea con ese valor
+      description: new FormControl(null),
+      price: new FormControl(null),
+      url: new FormControl(null),
+
+    });
+    /un FormControl por cada campo del formulario
+
+Para relacionar este objeto con el form html
+<form [formGroup]="courseAddForm">
+y en cada input
+formControlName="name"
+formControlName="description"
+
+tambien en FormGroup se puede anidar otro FormGroup
+ej.
+      price: new FormControl(null),
+      url: new FormControl(null), 
+      address: new FormGroup({
+        street; new FormControl(null),
+        city: new FormControl(null)
+      })
+
+Para agregar validacion se hace desde la propiedad del objeto como otro parametro
+Puede ir en array si son varios      
+      name: new FormControl(null, Validators.required),
+      description: new FormControl(null, [Validators.required, Validators.minLength(4)]),
+      price: new FormControl(null, Validators.required),
+
+Para acceder al objeto dirty, pristine, touched, etc
+  se hace de la siguiente manera :
+  *ngIf="courseAddForm.get('name').invalid"
+  el campo name sale del html en la propiedad se declara [formControlName]="'name'"  
+  *ngIf="courseAddForm.get('name').getError('required')"
+
+  Para acceder a courseAddForm.get('name')
+  desde una variable de la clase: 
+  una forma es hacer un get price que retorne this.courseAddForm.get('price');
+  entonces desde el html se invocaria price.invalid ,etc
+
+VALIDADORES PERSONALIZADOS
+es una funcion con una sintaxis especial, sino angular no la reconoce
+La funcion recibe un AbstractControl que puede ser un formControl  
+puede retornar un key tipo string o null
+
+Ej: 
+  minPrice(minPrice: number): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      if(control.value !== undefined && control.value <= minPrice) {
+        return {
+          minPrice: true
+        }
+      } else {
+        return null;
+      }
+    }
+  }
+  //Funcion minPrice para que el valor sea meyor a 10
+  en el if entra la logica, retorna un key personalizado que en este lo llamamos
+  minPrice: true
+  caso contrario null osea invalido
+  Para llamarlo desde el html solo ponemos 
+     *ngIf="price.errors['minPrice']"
+
+DETECTAR CAMBIOS EN EL FORMULARIO
+Con observables sobre el formulario o el input
+con la propiedad:
+  this.formAdd.valueChanges.suscribe...//para cambios de valores
+  this.formAdd.statusChanges.suscribe...//para cambios de estados
+
+Para input separado: 
+declara propiedad: 
+  priceFormControl: FormControl = new FormControl(null, [Validators.required, this.minPrice(10)]);
+en el formGroup:
+  price: this.priceFormControl,
+  url: new FormControl(null)
+Por ultimo:
+  this.priceFormControl.valueChanges
+      .subscribe(value => console.log("LOG OBSERVABLE",value));
