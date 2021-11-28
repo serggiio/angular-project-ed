@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { Curso } from '../curso';
 
+
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
@@ -53,6 +54,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, 1000);*/
 
     this.getCursos();
+
+
 
 
   }

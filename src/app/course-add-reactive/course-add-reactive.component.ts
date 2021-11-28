@@ -23,8 +23,8 @@ export class CourseAddReactiveComponent implements OnInit {
     /*this.courseAddForm.valueChanges
       .subscribe(value => console.log("LOG OBSERVABLE",value));*/
       
-      /*this.priceFormControl.valueChanges
-      .subscribe(value => console.log("LOG OBSERVABLE",value));*/
+      this.priceFormControl.valueChanges
+      .subscribe(value => console.log("LOG OBSERVABLE",value));
   }
 
   onSubmit(){
